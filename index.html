@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f6f8">
+  <meta name="description" content="NaradNow — an independent current affairs dashboard for India, with news across politics, education, health, finance, science and more.">
+  <title>NaradNow — India, in the know.</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <div class="app-shell">
+    <div class="topline">
+      <div class="topline-inner">
+        <div class="live-label"><span class="live-dot"></span><span data-i18n="dailyBrief">THE DAILY BRIEF</span></div>
+        <div class="topline-message" id="topline-message" aria-live="polite">Independent reading. Original sources. Clear context.</div>
+        <div class="topline-meta"><span id="today-label">India edition</span><span class="topline-separator">/</span><span id="last-sync">Waiting for feeds</span></div>
+      </div>
+    </div>
+
+    <header class="site-header">
+      <a class="brand" href="#home" aria-label="NaradNow home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 44 44" fill="none"><rect x="1" y="1" width="42" height="42" rx="13" fill="currentColor" opacity=".1"/><path d="M12 30V14h4.2l11.6 11.8V14H32v16h-4.1L16.2 18.1V30H12Z" fill="currentColor"/><circle cx="33" cy="11" r="3" fill="#E5A64B"/></svg>
+        </span>
+        <span class="brand-type"><span>Narad<span class="brand-now">Now</span></span><small data-i18n="brandTagline">India, in the know.</small></span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Primary navigation">
+        <a class="nav-link active" href="#home" data-i18n="navHome">Home</a>
+        <a class="nav-link" href="#latest" data-cat-shortcut="politics" data-i18n="navIndia">India</a>
+        <a class="nav-link" href="#latest" data-cat-shortcut="world" data-i18n="navWorld">World</a>
+        <a class="nav-link" href="#latest" data-cat-shortcut="finance" data-i18n="navBusiness">Business</a>
+        <a class="nav-link" href="#official-desk" data-i18n="navOfficial">Official desk</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="icon-button search-open" id="search-open" aria-label="Focus search" title="Search news"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg></button>
+        <button class="icon-button theme-button" id="theme-toggle" aria-label="Theme mode: automatic" title="Switch theme mode"><svg id="theme-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg><span class="theme-mode-label" id="theme-mode-label">Auto</span></button>
+        <button class="language-toggle" id="language-toggle" aria-label="Switch language">हिंदी</button>
+        <button class="mobile-menu-button icon-button" id="mobile-menu-button" aria-label="Open navigation" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      </div>
+    </header>
+
+    <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" hidden>
+      <a href="#home" data-i18n="navHome">Home</a><a href="#latest" data-cat-shortcut="politics" data-i18n="navIndia">India</a><a href="#latest" data-cat-shortcut="world" data-i18n="navWorld">World</a><a href="#latest" data-cat-shortcut="finance" data-i18n="navBusiness">Business</a><a href="#official-desk" data-i18n="navOfficial">Official desk</a>
+    </nav>
+
+    <main id="main-content">
+      <section class="intro-row" id="home">
+        <div class="intro-copy">
+          <div class="eyebrow"><span class="eyebrow-line"></span><span data-i18n="independentDesk">YOUR INDEPENDENT NEWS DESK</span></div>
+          <h1><span data-i18n="heroLine1">India, in the</span><br><em data-i18n="heroLine2">know.</em></h1>
+          <p data-i18n="heroDescription">A calmer way to catch up on what matters — from national decisions to the ideas shaping tomorrow.</p>
+          <div class="intro-bottom"><span class="intro-date" id="intro-date">Today, India</span><span class="intro-divider"></span><span class="intro-note" data-i18n="sourceFirst">Sources first. Noise less.</span></div>
+        </div>
+        <div class="intro-art" aria-label="NaradNow newsroom illustration">
+          <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div><div class="art-orbit orbit-three"></div>
+          <div class="art-sun"></div><div class="art-card art-card-main"><div class="art-card-top"><span class="tiny-pill"><span class="live-dot"></span> INDIA BRIEF</span><span class="art-spark">✳</span></div><div class="art-lines"><i></i><i></i><i></i></div><div class="art-chart"><span style="height:27%"></span><span style="height:44%"></span><span style="height:36%"></span><span style="height:72%"></span><span style="height:53%"></span><span style="height:91%"></span><span style="height:68%"></span><span style="height:100%"></span></div><div class="art-card-bottom"><span>THE BIG PICTURE</span><span>01 / 06</span></div></div>
+          <div class="float-chip chip-source"><span class="chip-check">✓</span><span><b>Source-linked</b><small>Read beyond the headline</small></span></div>
+          <div class="float-chip chip-pulse"><span class="pulse-icon">↗</span><span><b>Stay informed</b><small>Across every beat</small></span></div>
+          <div class="art-caption">NEWS, WITH CONTEXT <span>—</span> SINCE NOW</div>
+        </div>
+      </section>
+
+      <section class="ticker-section" aria-label="News update ticker">
+        <div class="ticker-label"><span class="ticker-star">✳</span><span data-i18n="newsPulse">NEWS PULSE</span></div>
+        <div class="ticker-window"><div class="ticker-track" id="ticker-track"><span>Connect the news feed to see the latest headlines here.</span><span class="ticker-dot">◆</span><span>Official updates from PIB can appear alongside news coverage.</span></div></div>
+        <button class="ticker-refresh" id="refresh-button" title="Refresh feeds" aria-label="Refresh feeds"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6.1 9A6.5 6.5 0 0 1 17 6.5L20 12M4 12l3 5.5A6.5 6.5 0 0 0 17.9 15"/></svg></button>
+      </section>
+
+      <div class="content-layout">
+        <aside class="left-rail" aria-label="News categories">
+          <div class="rail-heading" data-i18n="explore">EXPLORE</div>
+          <div class="category-list" id="category-list">
+            <button class="category-button selected" data-category="top"><span class="category-symbol">◈</span><span data-i18n="catForYou">For you</span><span class="category-arrow">↗</span></button>
+            <button class="category-button" data-category="politics"><span class="category-symbol">⌂</span><span data-i18n="catPolitics">Politics</span></button>
+            <button class="category-button" data-category="education"><span class="category-symbol">▤</span><span data-i18n="catEducation">Education</span></button>
+            <button class="category-button" data-category="health"><span class="category-symbol">✚</span><span data-i18n="catHealth">Health</span></button>
+            <button class="category-button" data-category="finance"><span class="category-symbol">₹</span><span data-i18n="catFinance">Finance</span></button>
+            <button class="category-button" data-category="business"><span class="category-symbol">↗</span><span data-i18n="catBusiness">Business</span></button>
+            <button class="category-button" data-category="science"><span class="category-symbol">✳</span><span data-i18n="catScience">Science</span></button>
+            <button class="category-button" data-category="technology"><span class="category-symbol">⌘</span><span data-i18n="catTechnology">Technology</span></button>
+            <button class="category-button" data-category="environment"><span class="category-symbol">❋</span><span data-i18n="catEnvironment">Environment</span></button>
+            <button class="category-button" data-category="sports"><span class="category-symbol">◎</span><span data-i18n="catSports">Sports</span></button>
+            <button class="category-button" data-category="world"><span class="category-symbol">⊕</span><span data-i18n="catWorld">World</span></button>
+            <button class="category-button" data-category="government"><span class="category-symbol">▦</span><span data-i18n="catGovernment">Govt. schemes</span></button>
+          </div>
+          <div class="rail-card">
+            <div class="rail-card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 3.5 7v.8h17V7L12 3ZM5 10v7m4-7v7m6-7v7m4-7v7M3 20h18M4 18.5h16"/></svg></div>
+            <p data-i18n="officialCardTitle">Read it at the source.</p><span data-i18n="officialCardBody">Government updates, directly from PIB.</span><a href="#official-desk" data-i18n="viewOfficial">View official desk ↗</a>
+          </div>
+          <div class="rail-footnote"><span class="footnote-dot"></span><span data-i18n="editorialNote">Headlines link to their original publishers.</span></div>
+        </aside>
+
+        <section class="main-feed" id="latest">
+          <div class="section-heading-row">
+            <div><div class="eyebrow small-eyebrow"><span class="eyebrow-line"></span><span id="feed-kicker" data-i18n="latestBrief">LATEST BRIEFING</span></div><h2 id="feed-heading" data-i18n="topStories">Top stories<span class="heading-period">.</span></h2></div>
+            <div class="feed-actions"><div class="search-box" id="search-box"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg><input id="news-search" type="search" placeholder="Search headlines…" aria-label="Search headlines"><button id="clear-search" aria-label="Clear search" hidden>×</button></div><button class="filter-button" id="filter-button" aria-label="Show all categories" title="Show top stories">All <span>⌄</span></button></div>
+          </div>
+
+          <div class="feed-notice" id="feed-notice" role="status"><span class="notice-symbol">i</span><span id="feed-notice-text">Preview mode: connect your free Cloudflare Worker and NewsData.io key to load live stories. PIB is fetched through the Worker.</span><button id="dismiss-notice" aria-label="Dismiss notice">×</button></div>
+          <div class="story-grid" id="story-grid" aria-live="polite">
+            <article class="story-card story-featured sample-card" data-preview-category="top politics government world sports"><div class="story-image image-editorial"><span class="image-flag">NARADNOW PREVIEW</span><div class="image-shape shape-sun"></div><div class="image-shape shape-arch"></div><div class="image-skyline"><i></i><i></i><i></i><i></i><i></i></div><span class="image-kicker">THE BIG PICTURE</span></div><div class="story-content"><div class="story-meta"><span class="story-category">India</span><span class="meta-dot"></span><span>Preview story</span></div><h3>Make room for the stories that shape the day.</h3><p>This layout is ready for source-linked headlines from NewsData.io and official government releases from PIB.</p><div class="story-footer"><span class="source-name">NaradNow design preview</span><span class="read-time">NOT LIVE</span></div></div></article>
+            <article class="story-card sample-card" data-preview-category="education"><div class="story-image image-education"><span class="image-flag">PREVIEW</span><div class="book-stack"><i></i><i></i><i></i></div><span class="image-kicker">EDUCATION</span></div><div class="story-content"><div class="story-meta"><span class="story-category">Education</span><span class="meta-dot"></span><span>Preview</span></div><h3>Education updates, without the noise.</h3><p>Exam notices, policy changes and campus news can live in one focused feed.</p><div class="story-footer"><span class="source-name">NaradNow preview</span><span class="read-time">NOT LIVE</span></div></div></article>
+            <article class="story-card sample-card" data-preview-category="finance business"><div class="story-image image-economy"><span class="image-flag">PREVIEW</span><div class="econ-bars"><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="image-kicker">ECONOMY & FINANCE</span></div><div class="story-content"><div class="story-meta"><span class="story-category">Finance</span><span class="meta-dot"></span><span>Preview</span></div><h3>Understand the numbers behind the news.</h3><p>Track policy, markets and personal-finance developments with original-source links.</p><div class="story-footer"><span class="source-name">NaradNow preview</span><span class="read-time">NOT LIVE</span></div></div></article>
+            <article class="story-card sample-card" data-preview-category="science technology environment health"><div class="story-image image-science"><span class="image-flag">PREVIEW</span><div class="science-orbit"><i></i><i></i><i></i><b></b></div><span class="image-kicker">SCIENCE & TECH</span></div><div class="story-content"><div class="story-meta"><span class="story-category">Science</span><span class="meta-dot"></span><span>Preview</span></div><h3>Big ideas, explained with context.</h3><p>Space, research, health and technology stories in a readable daily briefing.</p><div class="story-footer"><span class="source-name">NaradNow preview</span><span class="read-time">NOT LIVE</span></div></div></article>
+          </div>
+          <div class="load-more-wrap"><button class="load-more" id="load-more" hidden>Load more stories <span>↓</span></button><span class="load-more-note" id="load-more-note" data-i18n="previewNote">Preview cards are illustrative, not current news.</span></div>
+
+          <section class="official-desk" id="official-desk">
+            <div class="official-heading"><div class="official-seal"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 3.5 7v.8h17V7L12 3ZM5 10v7m4-7v7m6-7v7m4-7v7M3 20h18M4 18.5h16"/></svg></div><div><div class="eyebrow small-eyebrow"><span class="eyebrow-line"></span><span data-i18n="officialLabel">PRIMARY SOURCES</span></div><h2 data-i18n="officialHeading">The official desk<span class="heading-period">.</span></h2></div><a href="https://pib.gov.in/ViewRss.aspx?lang=1&reg=1" target="_blank" rel="noopener noreferrer" class="text-link" data-i18n="pibFeedLink">PIB RSS ↗</a></div>
+            <p class="official-description" data-i18n="officialDescription">Government press releases are shown separately so readers can distinguish official announcements from newsroom coverage.</p>
+            <div class="official-list" id="official-list"><div class="official-empty"><span class="official-empty-icon">↗</span><div><b>Official releases will appear here</b><small>Connect your Cloudflare Worker to load the PIB RSS feed.</small></div></div></div>
+          </section>
+        </section>
+
+        <aside class="right-rail">
+          <section class="brief-card">
+            <div class="brief-card-top"><span class="brief-icon">✳</span><span class="mini-label" data-i18n="dailyDesk">THE DAILY DESK</span><span class="brief-edition">01</span></div>
+            <h3 data-i18n="dailyDigestTitle">A little more context.<br>Every day.</h3>
+            <p data-i18n="dailyDigestBody">Build your own briefing across the topics you follow. Your saved stories stay on this device.</p>
+            <button id="show-saved" class="brief-action"><span data-i18n="savedStories">Saved stories</span><span class="saved-count" id="saved-count">0</span><span class="button-arrow">↗</span></button>
+            <div class="brief-card-foot"><span class="tiny-check">✓</span><span data-i18n="privateNote">Saved locally. No account needed.</span></div>
+          </section>
+
+          <section class="right-module" id="saved-panel" hidden><div class="module-title-row"><h3 data-i18n="savedTitle">Your reading list</h3><button id="close-saved" class="text-icon-button" aria-label="Close saved stories">×</button></div><div id="saved-list" class="saved-list"><p class="empty-small">No saved stories yet.</p></div></section>
+
+          <section class="right-module trending-module"><div class="module-title-row"><h3 data-i18n="popularTopics">Popular topics</h3><span class="module-mark">↗</span></div><div class="topic-tags"><button data-topic="parliament"># Parliament</button><button data-topic="education"># Education</button><button data-topic="rbi"># RBI</button><button data-topic="isro"># ISRO</button><button data-topic="climate"># Climate</button><button data-topic="technology"># Technology</button></div><p class="module-footnote" data-i18n="topicNote">Tap a topic to search the feed.</p></section>
+
+          <section class="right-module source-module"><div class="module-title-row"><h3 data-i18n="sourceHealth">Source status</h3><span class="module-mark">◎</span></div><div class="source-status-row"><span class="source-bullet" id="newsdata-bullet"></span><span><b>NewsData.io</b><small id="newsdata-status">Not connected</small></span><span class="status-tag" id="newsdata-tag">SETUP</span></div><div class="source-status-row"><span class="source-bullet" id="pib-bullet"></span><span><b>PIB RSS</b><small id="pib-status">Waiting for Worker</small></span><span class="status-tag" id="pib-tag">SETUP</span></div><div class="source-module-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v5c0 5 3.2 8.4 8 10 4.8-1.6 8-5 8-10V6l-8-3Z"/><path d="m8.5 12 2.3 2.3 4.7-5"/></svg><span data-i18n="statusNote">API credentials stay on the server, not in this page.</span></div></section>
+
+          <section class="exam-card"><div class="exam-topline"><span data-i18n="examCorner">FOR THE CURIOUS</span><span>✦</span></div><h3 data-i18n="examTitle">Know more than the headline.</h3><p data-i18n="examBody">A daily quiz and revision notes can be added to turn headlines into learning.</p><button id="quiz-button" class="exam-link"><span data-i18n="quizPreview">Preview a quick quiz</span><span>↗</span></button><div class="exam-decoration">N<span>.</span>N</div></section>
+        </aside>
+      </div>
+
+      <section class="closing-strip"><div class="closing-symbol">N<span>✳</span></div><div><span class="closing-kicker" data-i18n="closingKicker">A MORE THOUGHTFUL NEWS ROUTINE</span><h2 data-i18n="closingTitle">Stay curious. Stay informed.</h2></div><a href="#home" class="back-top" data-i18n="backTop">Back to top ↑</a></section>
+    </main>
+
+    <footer class="site-footer"><a href="#home" class="footer-brand">Narad<span>Now</span></a><p data-i18n="footerLine">An independent interface for reading the news. Headlines remain the property of their original publishers.</p><div class="footer-right"><span>Made for India</span><span class="footer-dot">✳</span><span id="footer-year">2026</span></div></footer>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <dialog class="quiz-dialog" id="quiz-dialog"><form method="dialog"><button class="dialog-close" aria-label="Close quiz">×</button></form><div class="eyebrow small-eyebrow"><span class="eyebrow-line"></span><span data-i18n="quizLabel">QUICK KNOWLEDGE CHECK</span></div><h2 data-i18n="quizTitle">A sample current-affairs quiz.</h2><p class="quiz-note" data-i18n="quizNote">Demo question only. Connect verified daily quiz content before publishing this feature.</p><div class="quiz-question" id="quiz-question">Which organisation is India's central bank?</div><div class="quiz-options" id="quiz-options"><button data-answer="wrong">SEBI</button><button data-answer="correct">Reserve Bank of India</button><button data-answer="wrong">NITI Aayog</button></div><p class="quiz-result" id="quiz-result" aria-live="polite"></p></dialog>
+  <script src="app.js"></script>
+</body>
+</html>

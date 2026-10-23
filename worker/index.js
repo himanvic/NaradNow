@@ -1,0 +1,53 @@
+/**
+ * NaradNow feed proxy for Cloudflare Workers.
+ * Required secret: NEWS_DATA_API_KEY (free NewsData.io API key)
+ * Optional variable: ALLOWED_ORIGIN (e.g. https://naradnow.pages.dev; default allows all origins)
+ * Endpoint: /api/news?category=top&language=en&limit=18&search=...
+ */
+const NEWS_ENDPOINT = "https://newsdata.io/api/1/latest";
+const PIB_FEEDS = {
+  en: "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=1",
+  hi: "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=2&Regid=3"
+};
+const ALLOWED_CATEGORIES = new Set(["top","politics","education","health","finance","business","science","technology","environment","sports","world","government"]);
+const NEWS_CATEGORY = {top:"top",politics:"politics",education:"education",health:"health",finance:"business",business:"business",science:"science",technology:"technology",environment:"environment",sports:"sports",world:"world",government:"politics"};
+const CATEGORY_KEYWORDS = {
+  politics:/parliament|election|minister|politic|assembly|cabinet|party|government|lok sabha|rajya sabha|policy|bill|ordinance/i,
+  education:/education|school|college|university|exam|student|ugc|neet|jee|cbse|education ministry|scholarship|academic/i,
+  health:/health|hospital|medical|doctor|disease|medicine|pharma|public health|vaccine|wellness|ayush/i,
+  finance:/finance|economy|economic|rbi|reserve bank|inflation|bank|tax|budget|rupee|market|stock|gdp|sebi/i,
+  business:/business|industry|company|startup|corporate|trade|manufactur|commerce|enterprise|investment/i,
+  science:/science|research|space|isro|nasa|scientific|laboratory|physics|biology|discovery/i,
+  technology:/technology|tech |artificial intelligence| ai |cyber|digital|software|internet|semiconductor|telecom|robot/i,
+  environment:/environment|climate|weather|pollution|forest|wildlife|renewable|emission|conservation|sustainab/i,
+  sports:/sport|cricket|football|hockey|olympic|athlete|tournament|match|world cup|medal/i,
+  world:/international|foreign|world|global|united nations|diplom|geopolit|border|summit/i,
+  government:/scheme|government|ministry|cabinet|policy|programme|program|initiative|benefit|yojana|commission|official/i
+};
+function json(data,status=200,origin="*",extra={}) { return new Response(JSON.stringify(data),{status,headers:{"Content-Type":"application/json; charset=utf-8","Cache-Control":"public, max-age=300","Access-Control-Allow-Origin":origin,"Access-Control-Allow-Methods":"GET, OPTIONS","Access-Control-Allow-Headers":"Content-Type","Vary":"Origin",...extra}}); }
+function cleanText(v="") { return String(v).replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g,"$1").replace(/<script[\s\S]*?<\/script>/gi," ").replace(/<style[\s\S]*?<\/style>/gi," ").replace(/<[^>]+>/g," ").replace(/&nbsp;/gi," ").replace(/&amp;/gi,"&").replace(/&lt;/gi,"<").replace(/&gt;/gi,">").replace(/&quot;/gi,'"').replace(/&#39;|&apos;/gi,"'").replace(/&#(\d+);/g,(_,n)=>String.fromCodePoint(Number(n))).replace(/&#x([\da-f]+);/gi,(_,n)=>String.fromCodePoint(parseInt(n,16))).replace(/\s+/g," ").trim(); }
+function tag(block,name){const re=new RegExp(`<${name}(?:\\s+[^>]*)?>([\\s\\S]*?)<\\/${name}\\s*>`,"i");return cleanText((block.match(re)||[])[1]||"");}
+function parseRss(xml,language){const chunks=xml.match(/<item\b[\s\S]*?<\/item>/gi)||[];return chunks.map((chunk,i)=>{const title=tag(chunk,"title");let link=tag(chunk,"link");if(!link){const m=chunk.match(/<link\b[^>]*href=["']([^"']+)["']/i);if(m)link=m[1];}const description=tag(chunk,"description")||tag(chunk,"summary");const pubDate=tag(chunk,"pubDate")||tag(chunk,"dc:date")||tag(chunk,"date");const guid=tag(chunk,"guid")||link;return {id:`pib-${guid||i}`,title:title||"Official press release",description,url:safeHttpUrl(link),publishedAt:pubDate,sourceName:"Press Information Bureau (PIB)",sourceType:"pib",category:"government",language,official:true};}).filter(a=>a.title&&a.url!=="#");}
+function safeHttpUrl(value){try{const u=new URL(value);return ["http:","https:"].includes(u.protocol)?u.href:"#";}catch{return "#";}}
+function cleanNewsArticle(a){return {id:String(a.article_id||a.link||a.title||""),title:String(a.title||"Untitled article"),description:cleanText(a.description||a.content||"").slice(0,800),url:safeHttpUrl(a.link),image:safeHttpUrl(a.image_url)==="#"?"":safeHttpUrl(a.image_url),publishedAt:a.pubDate||a.pubdate||a.published_at||"",sourceName:a.source_name||a.source_id||"News source",sourceType:"newsdata",category:Array.isArray(a.category)?a.category[0]||"top":a.category||"top",language:a.language||"en",official:false};}
+function matchesCategory(item,cat){if(cat==="top")return true;if(cat==="government")return true;const c=String(item.category||"").toLowerCase();if(c.includes(cat)||cat==="finance"&&c.includes("business"))return true;const text=`${item.title} ${item.description}`;const rule=CATEGORY_KEYWORDS[cat];return !!rule&&rule.test(text);}
+function dedupe(items){const seen=new Set();return items.filter(item=>{const key=(item.url||item.title||"").toLowerCase().replace(/[?#].*$/g,"");const title=item.title.toLowerCase().replace(/[^\p{L}\p{N}]+/gu," ").trim();const alternate=title.slice(0,100);if(seen.has(key)||seen.has(alternate))return false;seen.add(key);seen.add(alternate);return true;});}
+async function fetchJson(url){const r=await fetch(url,{headers:{Accept:"application/json","User-Agent":"NaradNow/1.0 (news aggregator)"},cf:{cacheTtl:300,cacheEverything:true}});if(!r.ok)throw new Error(`NewsData.io returned ${r.status}`);return await r.json();}
+async function fetchPib(language){try{const r=await fetch(PIB_FEEDS[language]||PIB_FEEDS.en,{headers:{Accept:"application/rss+xml, application/xml, text/xml"},cf:{cacheTtl:600,cacheEverything:true}});if(!r.ok)throw new Error(`PIB returned ${r.status}`);const xml=await r.text();return {ok:true,items:parseRss(xml,language)};}catch(err){return {ok:false,items:[],error:String(err.message||err)};}}
+function addCors(response,origin){const h=new Headers(response.headers);h.set("Access-Control-Allow-Origin",origin);h.set("Access-Control-Allow-Methods","GET, OPTIONS");h.set("Access-Control-Allow-Headers","Content-Type");h.set("Vary","Origin");return new Response(response.body,{status:response.status,headers:h});}
+export default { async fetch(request,env,ctx){const url=new URL(request.url);const origin=request.headers.get("Origin")||"";const allowed=env.ALLOWED_ORIGIN||"*";if(allowed!=="*"&&origin&&origin!==allowed&&origin!=="http://localhost:5500"&&origin!=="http://127.0.0.1:5500")return json({ok:false,error:"Origin not allowed"},403,allowed);const corsOrigin=allowed==="*"?(origin||"*"):allowed;
+  if(request.method==="OPTIONS")return new Response(null,{status:204,headers:{"Access-Control-Allow-Origin":corsOrigin,"Access-Control-Allow-Methods":"GET, OPTIONS","Access-Control-Allow-Headers":"Content-Type","Access-Control-Max-Age":"86400","Vary":"Origin"}});
+  if(request.method!=="GET")return json({ok:false,error:"Use GET"},405,corsOrigin);
+  if(url.pathname!=="/api/news"&&url.pathname!=="/")return json({ok:false,error:"Not found. Use /api/news"},404,corsOrigin);
+  const catRaw=(url.searchParams.get("category")||"top").toLowerCase();const category=ALLOWED_CATEGORIES.has(catRaw)?catRaw:"top";const language=url.searchParams.get("language")==="hi"?"hi":"en";const search=(url.searchParams.get("search")||"").trim().slice(0,120);const limit=Math.max(1,Math.min(24,Number.parseInt(url.searchParams.get("limit")||"18",10)||18));
+  // Cache the combined response to reduce API credits and repeat RSS downloads.
+  const cacheUrl=new URL(request.url);cacheUrl.searchParams.set("category",category);cacheUrl.searchParams.set("language",language);cacheUrl.searchParams.set("search",search);cacheUrl.searchParams.set("limit",String(limit));cacheUrl.searchParams.sort();const cacheKey=new Request(cacheUrl.toString(),{method:"GET"});const cache=caches.default;
+  try{const cached=await cache.match(cacheKey);if(cached)return addCors(cached,corsOrigin);}catch(_){/* cache unavailable locally; continue */}
+  const pibPromise=fetchPib(language);let newsItems=[];let newsStatus={ok:false,error:"NewsData.io API key not configured"};if(env.NEWS_DATA_API_KEY){try{const apiUrl=new URL(NEWS_ENDPOINT);apiUrl.searchParams.set("apikey",env.NEWS_DATA_API_KEY);apiUrl.searchParams.set("country","in");apiUrl.searchParams.set("language",language);apiUrl.searchParams.set("size",String(Math.min(10,limit)));if(search)apiUrl.searchParams.set("q",search);else{apiUrl.searchParams.set("category",NEWS_CATEGORY[category]||"top");}const data=await fetchJson(apiUrl.toString());if(data.status==="success"||Array.isArray(data.results)){newsItems=(data.results||[]).map(cleanNewsArticle);newsStatus={ok:true};}else{newsStatus={ok:false,error:data.message||data.results?.message||"API returned an error"};}}catch(err){newsStatus={ok:false,error:String(err.message||err)};}}
+  const pibResult=await pibPromise;let pibItems=pibResult.items;if(category!=="top")pibItems=pibItems.filter(a=>matchesCategory(a,category));if(category!=="top")newsItems=newsItems.filter(a=>matchesCategory(a,category));if(search){const q=search.toLowerCase();pibItems=pibItems.filter(a=>`${a.title} ${a.description}`.toLowerCase().includes(q));newsItems=newsItems.filter(a=>`${a.title} ${a.description}`.toLowerCase().includes(q));}
+  // Re-map official release category based on simple keywords, without claiming fact verification.
+  pibItems=pibItems.map(a=>({...a,category:Object.keys(CATEGORY_KEYWORDS).find(key=>CATEGORY_KEYWORDS[key].test(`${a.title} ${a.description}`))||"government"}));
+  const items=dedupe([...newsItems,...pibItems]).sort((a,b)=>dateNumber(b.publishedAt)-dateNumber(a.publishedAt));const articles=items.slice(0,limit);const official=pibResult.items.slice(0,8);let message="";let warning="";if(!newsStatus.ok&&pibResult.ok)message="PIB official releases loaded; add your NewsData.io API key for wider news coverage.";else if(!pibResult.ok&&newsStatus.ok)message="NewsData.io loaded; the official PIB feed could not be reached this time.";else if(!newsStatus.ok&&!pibResult.ok)message="Neither news source could be reached. Check your API key and retry.";
+  const payload={ok:true,category,language,articles,official,lastUpdated:new Date().toISOString(),count:articles.length,sources:{newsdata:{ok:newsStatus.ok,error:newsStatus.error||null},pib:{ok:pibResult.ok,error:pibResult.error||null}},message,warning};const response=json(payload,200,corsOrigin,{"Cache-Control":"public, max-age=300"});try{ctx.waitUntil(cache.put(cacheKey,response.clone()));}catch(_){/* cache APIs aren't available in every local runner */}return response;
+}}
+function dateNumber(s){const n=Date.parse(s||"");return Number.isFinite(n)?n:0;}
