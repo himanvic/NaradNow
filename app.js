@@ -1,6 +1,6 @@
 /* NaradNow frontend. Configure API_BASE to your deployed Cloudflare Worker endpoint. */
 const API_BASE = "https://naradnow-api.notesfriendair1.workers.dev/api/news";
-const CACHE_KEY = "naradnow:cache:v1";
+const CACHE_KEY = "naradnow:cache:v2";
 const SAVED_KEY = "naradnow:saved:v1";
 const THEME_KEY = "naradnow:theme:v1";
 const LANG_KEY = "naradnow:language:v1";
@@ -310,14 +310,30 @@ function localDate(date = new Date()) {
     timeZone: "Asia/Kolkata",
   }).format(date);
 }
+function parsePublishedDate(value) {
+  if (!value) return null;
+  const raw = String(value).trim();
+  // NewsData.io pubDate examples use "YYYY-MM-DD HH:mm:ss" and provide UTC in pubDateTZ.
+  // Treat a timezone-less API timestamp as UTC rather than the visitor's local timezone.
+  const naive = raw.match(
+    /^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2}:\d{2}(?:\.\d+)?)$/,
+  );
+  const normalized = naive ? `${naive[1]}T${naive[2]}Z` : raw;
+  const date = new Date(normalized);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
 function timeAgo(value) {
-  if (!value) return "";
-  let d = new Date(value);
-  if (Number.isNaN(d.getTime())) return "";
-  let mins = Math.max(0, Math.floor((Date.now() - d.getTime()) / 60000));
-  if (mins < 60) return `${mins}m ago`;
-  let hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
+  const d = parsePublishedDate(value);
+  if (!d) return "";
+  const delta = Date.now() - d.getTime();
+  if (delta < -60000) return state.language === "hi" ? "अभी-अभी" : "just now";
+  const mins = Math.max(0, Math.floor(delta / 60000));
+  if (mins < 1) return state.language === "hi" ? "अभी-अभी" : "just now";
+  if (mins < 60)
+    return state.language === "hi" ? `${mins} मिनट पहले` : `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24)
+    return state.language === "hi" ? `${hrs} घंटे पहले` : `${hrs}h ago`;
   return new Intl.DateTimeFormat(state.language === "hi" ? "hi-IN" : "en-IN", {
     day: "numeric",
     month: "short",
