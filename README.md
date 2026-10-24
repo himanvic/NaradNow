@@ -13,11 +13,18 @@ NaradNow is a static-first Indian news and current-affairs dashboard. It combine
 - News categories, headline search (`/` focuses search), search terms and local saved stories.
 - NewsData.io headlines and a separate official PIB desk through a Cloudflare Worker.
 - Quality filter for spam-like lottery, jackpot, casino and horoscope headlines.
-- Animated 6-story hero carousel, desktop custom cursor, reading-progress indicator and staggered card entrances.
+- Animated 6-story hero carousel, minimal high-contrast desktop pointer (no trail or oversized ring), reading-progress indicator and staggered card entrances.
 - Quick Reader drawer (right-side drawer on desktop; bottom sheet on mobile).
 - Three-question source quiz generated from the headlines loaded into the page.
 - A service worker caches the static app shell after the first visit; locally cached feed responses can support read-only fallback when the network is unavailable.
 - No front-end framework, build step, database, or paid client library is required. After the first successful visit over HTTPS, the service worker caches the static UI shell. Locally cached headlines may remain readable offline; refreshing live headlines requires an internet connection. Offline support is best-effort and depends on the browser retaining site storage.
+
+## Latest update — 24 October 2026
+
+- The desktop pointer is now a single high-contrast arrow/hand inspired by clean macOS-style UI. It has no trailing ring, spring tail, or “Read” pill. Touch devices and reduced-motion settings use the normal system pointer.
+- A visible, collapsible “What’s new in NaradNow” panel on the homepage summarizes recent features so the updates are discoverable without opening GitHub.
+- The right-side learning card now describes the available Quick Reader and three-question source quiz instead of saying those features may be added later.
+- The service-worker cache was bumped to `v4` so returning visitors can receive the latest HTML/CSS/JS app shell after deployment.
 
 ## Repository structure
 

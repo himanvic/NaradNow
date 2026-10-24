@@ -8,3 +8,9 @@
 6. Hard-refresh `https://naradnow.pages.dev/` using `Ctrl+F5`.
 
 Quick tests: click theme toggle (Dark Forest → Warm Paper → Auto), choose a story to open Quick Reader, press `/` to focus search, try the 6 hero dots, test the quiz, and check mobile layout with browser device emulation.
+
+## Latest polish (24 Oct 2026)
+
+- The pointer is now a single high-contrast arrow/hand with no trail or trailing ring.
+- A visible “What’s new in NaradNow” panel summarizes recent features.
+- The static cache version is v4; push the site files to GitHub to update Pages.
