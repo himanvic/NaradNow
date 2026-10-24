@@ -512,7 +512,7 @@ svg { width: 1.2em; height: 1.2em; fill: none; stroke: currentColor; stroke-widt
 .quiz-note { margin: 14px 0 0; color: var(--muted); font-size: 10px; line-height: 1.7; }
 .quiz-question { margin: 22px 0 17px; font-family: var(--font-display); font-size: 21px; font-weight: 500; line-height: 1.45; letter-spacing: -.02em; white-space: pre-line; }
 .quiz-options { display: grid; gap: 8px; }
-.quiz-options button { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 11px 13px; border: 1px solid var(--line); border-radius: 11px; background: var(--surface); color: var(--ink-soft); text-align: left; font-size: 11px; line-height: 1.5; transition: border-color .16s, background .16s, color .16s, transform .16s; }
+.quiz-options button { min-width: 0; overflow-wrap: anywhere; display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 11px 13px; border: 1px solid var(--line); border-radius: 11px; background: var(--surface); color: var(--ink-soft); text-align: left; font-size: 11px; line-height: 1.5; transition: border-color .16s, background .16s, color .16s, transform .16s; }
 .quiz-options button::before { display: grid; place-items: center; width: 22px; height: 22px; flex: none; border: 1px solid var(--line-strong); border-radius: 7px; color: var(--muted); font-size: 9px; content: ""; }
 .quiz-options button:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); transform: translateX(2px); }
 .quiz-options button.correct-answer { border-color: color-mix(in srgb, var(--accent) 65%, var(--line)); background: var(--accent-soft); color: var(--accent); }

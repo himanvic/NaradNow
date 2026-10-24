@@ -1,0 +1,18 @@
+NaradNow screen-recording review fixes
+
+Replace these seven files at the ROOT of your existing NaradNow project:
+- index.html
+- styles.css
+- app.js
+- sw.js
+- README.md
+- CHANGELOG.md
+- UPDATE-NOW.md
+
+Fixes included:
+- Quiz no longer blanks arbitrary words or invents unrelated answer choices. It asks up to three questions grounded in loaded headlines and source metadata.
+- News Pulse and story feed suppress obvious music/video promo headlines alongside lottery/casino/horoscope spam.
+- Top-feed badges show NEWS instead of repeating the navigation phrase FOR YOU.
+- Service-worker cache bumped to v9 to serve the updated frontend after deploy.
+
+Do not replace the worker folder or change Cloudflare secrets for this frontend-only fix. Commit/push the files to deploy Pages.

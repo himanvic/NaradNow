@@ -12,8 +12,8 @@ NaradNow is a calm, source-linked Indian news and current-affairs reader. It bri
 - Responsive editorial homepage with a featured-story area, a clean news ticker, a Bento-style story feed, and an accessible primary navigation.
 - Search shortcuts: `/` or `Ctrl/Cmd + K` focus headline search.
 - Category filters for Politics, Education, Health, Finance, Business, Science, Technology, Environment, Sports, World and Government Schemes.
-- Original-source labels, language badges, publication-time handling, spam/lottery filtering, duplicate filtering, and load-more support when a next-page token is provided.
-- Quick Reader drawer, locally saved stories, reading-list `.txt` export, and a five-question quiz based on loaded headline metadata.
+- Original-source labels, language badges, publication-time handling, spam/lottery and obvious entertainment-promo filtering, duplicate filtering, and load-more support when a next-page token is provided.
+- Quick Reader drawer, locally saved stories, reading-list `.txt` export, and a three-question briefing quiz grounded in loaded headlines and source labels.
 - Optional UPSC/CSE and SSC/General Awareness study mode with keyword-based topic suggestions and local revision markers.
 - **Explore India**: animated city/state cards based on place mentions in the currently loaded headlines. Mention counts are not a ranking of news importance.
 - Best-effort offline app shell and a fallback to previously cached headlines after a successful online visit.
@@ -71,3 +71,8 @@ The Worker secret must be named `NEWS_DATA_API_KEY`. Keep the value only in Clou
 **Developed by [himanvic](https://github.com/himanvic).**  
 **Repository:** [github.com/himanvic/NaradNow](https://github.com/himanvic/NaradNow)  
 **Live website:** [naradnow.pages.dev](https://naradnow.pages.dev/)
+
+
+## Quiz quality note
+
+The briefing quiz asks only questions grounded in the currently loaded headlines and source labels. It does not invent factual answers from a random missing word in a headline. Treat it as a briefing-recall exercise and open original reports for full current-affairs context.

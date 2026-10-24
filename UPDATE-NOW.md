@@ -35,3 +35,8 @@ Keep the existing `.git` folder, `favicon.svg`, `.gitignore`, and `worker/` fold
 ## Notes
 
 No API key is included. The production endpoint remains `https://naradnow-api.notesfriendair1.workers.dev/api/news`. The Worker stays separately deployed and its secret stays in Cloudflare. New headlines still require an internet connection.
+
+
+## Latest quality fix
+
+The quiz has been changed to use source-grounded headline recognition and publisher/PIB labels, capped at three questions. Generic story badges in the top feed read “NEWS” rather than “FOR YOU”. Obvious music/video promotions are filtered from the homepage feed/ticker. The Worker/API contract and Cloudflare secret are unchanged.

@@ -9,7 +9,7 @@
 - Restored the native system cursor and retained only subtle pointer-position card glow on desktop; removed the custom cursor overlay so the pointer stays visible in quiz dialogs.
 - Refined mobile/tablet layout, sticky swipeable categories, phone bottom-sheet reader, touch feedback and reduced-motion behavior.
 - Preserved the existing NewsData.io/PIB Worker contract and endpoint; no Worker/API changes are required for this frontend redesign.
-- Updated cache version to `naradnow-static-v8` so the new app shell is picked up after deploy.
+- Updated cache version to `naradnow-static-v9` so the updated app shell is picked up after deploy.
 
 ## Existing features preserved
 
@@ -17,3 +17,11 @@
 - Story carousel, Quick Reader, local saved stories and `.txt` export.
 - UPSC/SSC study tags, revision markers, current-affairs quiz and Explore India mention cards.
 - Worker-based news integration, duplicate/spam filtering and best-effort offline fallback.
+
+
+## Screen-recording review fixes — 24 Oct 2026
+
+- Rebuilt the quiz to avoid arbitrary missing-word questions and unrelated distractors. It now uses up to three questions grounded in loaded headlines, actual publisher labels, and official PIB labels where those sources are available.
+- Changed generic top-feed image badges from “FOR YOU” to “NEWS”; navigation still uses “For you”.
+- Filtered clearly promotional music/song/video headlines from the main feed and News Pulse without broadly suppressing cultural reporting.
+- Bumped the service-worker cache version to refresh the updated frontend.
