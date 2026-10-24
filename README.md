@@ -1,90 +1,69 @@
 # NaradNow — India, in the know
 
-NaradNow is a static-first Indian news and current-affairs dashboard. It combines general headlines from NewsData.io with official releases from the Press Information Bureau (PIB), then presents them in a responsive editorial interface.
-
 **Live website:** https://naradnow.pages.dev/  
-**News API Worker:** https://naradnow-api.notesfriendair1.workers.dev/  
-**Example endpoint:** https://naradnow-api.notesfriendair1.workers.dev/api/news?category=top&language=en
+**GitHub repository:** https://github.com/himanvic/NaradNow  
+**Developed by:** [himanvic](https://github.com/himanvic)
 
-## Features
+NaradNow is an independent Indian news and current-affairs reading experience. It brings together publisher headlines and official government announcements, with category browsing, search, a quiet editorial interface, study tools, and local saved stories.
 
-- Responsive editorial layout with a Dark Forest, Warm Paper, and Auto theme cycle.
-- English/Hindi interface switch and visible language badges on stories.
-- News categories, headline search (`/` focuses search), search terms and local saved stories.
-- NewsData.io headlines and a separate official PIB desk through a Cloudflare Worker.
-- Quality filter for spam-like lottery, jackpot, casino and horoscope headlines.
-- Animated 6-story hero carousel, minimal high-contrast desktop pointer (no trail or oversized ring), reading-progress indicator and staggered card entrances.
-- Quick Reader drawer (right-side drawer on desktop; bottom sheet on mobile).
-- Three-question source quiz generated from the headlines loaded into the page.
-- A service worker caches the static app shell after the first visit; locally cached feed responses can support read-only fallback when the network is unavailable.
-- No front-end framework, build step, database, or paid client library is required. After the first successful visit over HTTPS, the service worker caches the static UI shell. Locally cached headlines may remain readable offline; refreshing live headlines requires an internet connection. Offline support is best-effort and depends on the browser retaining site storage.
+## Reader features
 
-## Latest update — 24 October 2026
+- Dark Forest, Warm Paper, and Auto themes.
+- English/Hindi interface and headline language badges.
+- Responsive Bento-style stories, a rotating lead-story panel, and swipeable mobile categories.
+- Search (`/` focuses search), duplicate/spam headline filtering, and source links.
+- Quick Reader drawer, local bookmarks, and plain-text export of the reading list.
+- UPSC/CSE and SSC/General Awareness topic suggestions, plus local revision markers.
+- Five-question current-affairs quiz generated from available headlines. Quiz questions use the headline and supplied publisher/topic metadata; they are not an independent fact-check.
+- Best-effort offline app shell and recently cached headlines after an initial online visit.
 
-- The desktop pointer is now a single high-contrast arrow/hand inspired by clean macOS-style UI. It has no trailing ring, spring tail, or “Read” pill. Touch devices and reduced-motion settings use the normal system pointer.
-- A visible, collapsible “What’s new in NaradNow” panel on the homepage summarizes recent features so the updates are discoverable without opening GitHub.
-- The right-side learning card now describes the available Quick Reader and three-question source quiz instead of saying those features may be added later.
-- The service-worker cache was bumped to `v4` so returning visitors can receive the latest HTML/CSS/JS app shell after deployment.
-
-## Repository structure
+## Repository layout
 
 | Path | Purpose |
 | --- | --- |
-| `index.html` | Static page structure and dialog/drawer markup |
-| `styles.css` | Themes, responsive layouts, interactions and motion preferences |
-| `app.js` | UI behavior, data fetching, filtering, bookmarks, quiz and reader drawer |
-| `worker/index.js` | Cloudflare Worker source for NewsData.io and PIB |
-| `worker/README.md` | Instructions for deploying and configuring the Worker |
-| `sw.js` | Service worker that caches the static UI shell for repeat/offline visits |
-| `.gitignore` | Ignores local env and editor artifacts |
-| `CHANGELOG.md` | Summary of notable project changes |
+| `index.html` | Page structure, dialogs, drawer, and accessible controls |
+| `styles.css` | Theme system, layouts, transitions, and responsive behavior |
+| `app.js` | Reading interactions, content filtering, study mode, quiz, and pagination |
+| `worker/index.js` | Cloudflare Worker source for retrieving and normalizing news |
+| `worker/README.md` | Worker setup and deployment notes |
+| `sw.js` | Offline app-shell cache |
+| `CHANGELOG.md` | Record of notable updates |
 
 ## Run locally
 
 1. Clone or download this repository.
-2. Open the folder in VS Code.
-3. Use the Live Server extension to open `index.html`, or run any basic static-file server.
-4. The browser will call the configured Worker URL in `app.js` for live news. No API key belongs in the browser code.
+2. Open the project folder in VS Code.
+3. Use Live Server or another static HTTP server to open `index.html`.
+4. Live headlines require the public Worker endpoint configured in `app.js`; saved stories and previously cached content are local to the browser.
 
-## Deployment
+## Deployment notes
 
-### Static website (Cloudflare Pages)
+The static site is hosted on Cloudflare Pages and connected to this repository. Push commits to the production branch to publish frontend updates.
 
-The repository is connected to Cloudflare Pages. Push a commit to the configured production branch (usually `main`) to trigger a website deployment automatically. For a plain HTML/CSS/JS project, use no framework preset, no build command, and `.` as the build output directory if the root directory contains `index.html`.
+The news Worker is deployed separately unless a dedicated deployment pipeline has been configured. Its current public endpoint is `https://naradnow-api.notesfriendair1.workers.dev/api/news`. To deploy Worker source changes, open Cloudflare Dashboard → Workers & Pages → `naradnow-api`, replace the editor content with `worker/index.js`, and deploy.
 
-### News API (Cloudflare Worker)
+The Worker secret must be named `NEWS_DATA_API_KEY`. Keep the actual key only in Cloudflare's secret settings; never commit it into source files, README text, screenshots, or the public repository. Do not replace the existing secret when updating only the frontend.
 
-The Worker is deployed separately from Pages unless you explicitly configure a Worker build pipeline. To deploy code changes:
+## Sources, privacy, and limitations
 
-1. Open Cloudflare Dashboard → **Workers & Pages** → `naradnow-api` → **Edit code**.
-2. Replace the editor code with `worker/index.js` from this repository.
-3. Keep the `NEWS_DATA_API_KEY` secret configured in Worker settings.
-4. Deploy the Worker.
-5. Test the example endpoint above. A successful response reports source status under `sources.newsdata` and `sources.pib`.
+- Headlines and article content belong to their respective publishers. NaradNow links readers to original articles and is not an official government website.
+- Official government announcements are shown in a separate section to distinguish them from newsroom coverage.
+- Spam filtering and UPSC/SSC topic tags are heuristic suggestions; they can miss irrelevant stories or misclassify a relevant one. Verify important details with the original publisher or a primary source.
+- The quiz is assembled locally from loaded headlines and metadata; it does not independently validate reported facts.
+- Saved stories and revision markers are kept in browser storage on the current device. No NaradNow account is required.
+- Offline mode is best-effort: static assets and cached headlines may remain available, but retrieving current news requires internet access.
 
-### API secret
+## Accessibility and keyboard
 
-Create a NewsData.io key through the provider's official website. In Cloudflare Worker settings, add a **Secret** named exactly `NEWS_DATA_API_KEY`. Paste the key as the secret value. Never put the actual key in `app.js`, HTML, README, a public GitHub commit, or a screenshot.
+- Press `/` or `Ctrl/Cmd + K` to focus headline search.
+- Use Enter or Space to open a focused story card.
+- Press Escape to close the Quick Reader.
+- System cursor is retained on touch devices and when reduced motion is requested.
 
-The website's public `API_BASE` points to the deployed Worker URL. The key remains server-side.
+## Credits
 
-## News sources and limitations
+**Developed by [himanvic](https://github.com/himanvic).**  
+**Project repository:** [github.com/himanvic/NaradNow](https://github.com/himanvic/NaradNow)  
+**Live website:** [naradnow.pages.dev](https://naradnow.pages.dev/)
 
-- **NewsData.io** supplies general news. Provider plan limits, article availability, delay, and language metadata depend on the current plan and provider responses.
-- **PIB** supplies official government press releases. It is not a full feed of every national or international event. Some PIB article titles may be in Hindi even when the rest of the UI is English; titles are displayed as received and language badges are inferred from returned metadata/text.
-- NaradNow filters obvious spam terms, but it cannot guarantee factual correctness or complete coverage. Readers should open original publisher links and verify high-impact claims from primary sources.
-- The current quiz asks questions about publishers attached to loaded headlines; it does not claim to independently verify the underlying news facts.
-
-## Privacy and offline behavior
-
-Saved stories are stored in browser `localStorage`; feed cache is kept in the current browser session. No NaradNow account is required. The interface uses static files and system font fallbacks, but live data and remote article images need an internet connection. Local saved stories remain available on the device that saved them.
-
-## Accessibility and motion
-
-- Keyboard: press `/` to focus headline search, `Ctrl/Cmd + K` also focuses search, `Escape` closes the reader drawer.
-- Interactive story cards can be opened with Enter or Space when focused.
-- Custom cursor and motion-heavy behavior are disabled for coarse/touch pointers and when `prefers-reduced-motion: reduce` is active.
-
-## License and attribution
-
-News headlines, summaries, images, and article content belong to their respective publishers. NaradNow links to original sources and is an independent interface, not an official government website. Add a project license if you want to explicitly grant reuse rights to the code.
+News headlines, summaries, images, and article content remain the property of their original publishers. Add a license file if you want to grant explicit reuse rights to the code.

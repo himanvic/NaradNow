@@ -82,3 +82,13 @@ html[data-theme="paper"]{--pointer-fill:#111A15;--pointer-outline:#F6F3EB;--poin
 @media(pointer:fine) and (prefers-reduced-motion:no-preference){html.minimal-cursor-enabled,html.minimal-cursor-enabled *{cursor:none!important}html.minimal-cursor-enabled .minimal-cursor{display:block}}
 @media(pointer:coarse), (prefers-reduced-motion:reduce){.minimal-cursor{display:none!important}}
 @media(max-width:720px){.whats-new-content ul{grid-template-columns:1fr;gap:8px}.whats-new-summary{padding:12px;grid-template-columns:32px minmax(0,1fr) 22px}.whats-new-headings>span{font-size:9px}}
+
+
+/* Public project credit links */
+.footer-credits{display:flex;align-items:center;justify-content:flex-start;gap:13px;flex-wrap:wrap;font-size:9px;line-height:1.5;color:var(--muted);white-space:nowrap}
+.footer-credits a{color:var(--accent-2);font-weight:800;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .18s,color .18s}
+.footer-credits a:hover,.footer-credits a:focus-visible{color:var(--gold);border-bottom-color:currentColor;outline:none}
+.footer-credits span{display:inline-flex;gap:4px;align-items:center}
+@media(max-width:1020px){.footer-credits{gap:10px}.site-footer p{max-width:420px}}
+@media(max-width:720px){.footer-credits{order:2;margin-left:auto}.footer-right{order:3;margin-left:auto}.site-footer p{order:4;flex-basis:100%;max-width:none}}
+@media(max-width:470px){.footer-credits{order:3;width:100%;margin-left:0;white-space:normal}.footer-right{order:2;margin-left:auto}.footer-credits span{white-space:normal}}

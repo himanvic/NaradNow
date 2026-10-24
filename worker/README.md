@@ -1,20 +1,20 @@
 # NaradNow Cloudflare Worker
 
-This Worker serves the `/api/news` endpoint used by the static Pages site. It aggregates NewsData.io headlines and official PIB RSS releases.
+This Worker supplies the news endpoint for the static NaradNow site.
 
 ## Deploy
 
 1. Open Cloudflare Dashboard → Workers & Pages → `naradnow-api` → Edit code.
-2. Copy this folder's `index.js` into the editor (Cloudflare's default editor may name the file `worker.js`; the filename does not change the JavaScript behavior).
-3. Confirm the `NEWS_DATA_API_KEY` secret exists under Settings → Variables and Secrets. Never paste the actual key into repository source.
-4. Deploy and test `https://naradnow-api.notesfriendair1.workers.dev/api/news?category=top&language=en`.
+2. Replace the editor contents with `worker/index.js` from this repository.
+3. Keep the existing secret named `NEWS_DATA_API_KEY` configured in Worker settings.
+4. Deploy and test: `https://naradnow-api.notesfriendair1.workers.dev/api/news?category=top&language=en`.
 
-Pages and the Worker are deployed separately unless an explicit Git-based Worker build is configured. Pushing `worker/index.js` to GitHub does not by itself redeploy the running Worker.
+The website and Worker deploy separately. Pushing `worker/index.js` to GitHub does not itself deploy the running Worker.
 
-## Response checks
+## Pagination
 
-Look at `sources.newsdata.ok`, `sources.pib.ok`, `articles`, and `official`. An empty `official` array can mean the source was reachable but did not yield parseable releases; inspect the associated source error rather than assuming content is available.
+The Worker forwards an optional `page` token to NewsData.io and returns its `nextPage` token when supplied. The frontend only uses that token when the reader selects **Load more stories**. Provider pagination may be unavailable for some responses or plan limits.
 
-## Free-tier behavior
+## Security and reliability
 
-NewsData.io quotas/delays and Cloudflare free-plan limits may change. Do not promise real-time or complete coverage. Keep source URLs and publication times visible, and direct readers to the original publisher.
+Never commit the actual API key or paste it into frontend code. The key belongs only in Cloudflare's secret settings as `NEWS_DATA_API_KEY`. News coverage, delay, quotas, and official-feed availability depend on the upstream sources and may change.
