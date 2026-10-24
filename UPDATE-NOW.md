@@ -1,16 +1,20 @@
-# Publish the NaradNow reader update
+# NaradNow update checklist
 
-This release adds the UPSC/SSC study desk, revision markers, saved-list export, a five-question headline quiz, better feed filtering/pagination, and project credits. The public homepage now avoids technical connection/status panels.
+This patch updates the frontend and documentation. It does not change the deployed Worker code or API secret.
 
-## Update the website
+1. Replace these files in the existing repository: `index.html`, `styles.css`, `app.js`, `sw.js`, `README.md`, `CHANGELOG.md`, and `UPDATE-NOW.md`.
+2. In VS Code, review Source Control changes, commit, and push to GitHub. Cloudflare Pages should auto-deploy the frontend.
+3. Hard-refresh https://naradnow.pages.dev/ with `Ctrl + F5`.
+4. Test the cursor, then open the daily quiz. The system cursor should be visible while the native quiz dialog is open; close it to restore the page cursor.
+5. Open the **Explore India** disclosure below the story feed. Switch between **Top cities** and **Top states**. Counts are mentions in the loaded articles only, not a ranking of importance.
+6. Select a place card to search the current-affairs feed for matching headlines.
 
-1. Copy the update-only ZIP contents into the existing repository folder, preserving the `worker/` subfolder and the `.git` directory.
-2. In VS Code, save the files, review Source Control, and commit with `Improve NaradNow study tools and reader experience`.
-3. Push or Sync Changes. Cloudflare Pages will publish the frontend automatically.
-4. Open https://naradnow.pages.dev/ and hard-refresh with `Ctrl + F5`.
+No Worker deployment is required for these frontend-only changes. Keep the existing `NEWS_DATA_API_KEY` secret in Cloudflare. The Worker source remains unchanged in this patch.
 
-## Optional Worker update for Load more
+## Checks to run after deployment
 
-The updated `worker/index.js` forwards the provider's continuation token so the Load more button can request another page. The live Worker is deployed separately from Pages. To enable that behavior, deploy `worker/index.js` through Cloudflare Dashboard → Workers & Pages → `naradnow-api` → Edit code. Keep the existing `NEWS_DATA_API_KEY` secret; do not put the actual key in the code or GitHub.
-
-The existing first-page NewsData.io and PIB integration is preserved. The frontend and documentation update does not require changing the secret.
+- Theme toggle: Dark Forest → Warm Paper → Auto.
+- Quiz opens, answer choices work, cursor remains visible within the dialog, and closing the dialog restores the page cursor.
+- Explore India opens with a smooth reveal, city/state tabs update, and place cards apply a search.
+- `/` focuses search; Quick Reader opens; saved stories and export work.
+- On phone/tablet, custom cursor is hidden and the region cards stay responsive.
