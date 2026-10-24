@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f5f6f8">
+  <meta name="theme-color" content="#0C120E">
   <meta name="description" content="NaradNow — an independent current affairs dashboard for India, with news across politics, education, health, finance, science and more.">
   <title>NaradNow — India, in the know.</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <div class="reading-progress" id="reading-progress" aria-hidden="true"><span id="reading-progress-fill"></span></div>
   <a class="skip-link" href="#main-content">Skip to content</a>
   <div class="app-shell">
     <div class="topline">
@@ -65,6 +66,11 @@
           <div class="float-chip chip-source"><span class="chip-check">✓</span><span><b>Source-linked</b><small>Read beyond the headline</small></span></div>
           <div class="float-chip chip-pulse"><span class="pulse-icon">↗</span><span><b>Stay informed</b><small>Across every beat</small></span></div>
           <div class="art-caption">NEWS, WITH CONTEXT <span>—</span> SINCE NOW</div>
+          <div class="big-picture-panel" aria-label="Top stories carousel">
+            <div class="big-picture-overline"><span>THE BIG PICTURE</span><span id="big-picture-count">01 / 06</span></div>
+            <button class="big-picture-title" id="big-picture-title" type="button">A clearer view of today's headlines.</button>
+            <div class="big-picture-controls"><div class="hero-dots" id="hero-dots" aria-label="Choose featured story"></div><div class="hero-progress"><span id="hero-progress-fill"></span></div></div>
+          </div>
         </div>
       </section>
 
@@ -101,7 +107,7 @@
         <section class="main-feed" id="latest">
           <div class="section-heading-row">
             <div><div class="eyebrow small-eyebrow"><span class="eyebrow-line"></span><span id="feed-kicker" data-i18n="latestBrief">LATEST BRIEFING</span></div><h2 id="feed-heading" data-i18n="topStories">Top stories<span class="heading-period">.</span></h2></div>
-            <div class="feed-actions"><div class="search-box" id="search-box"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg><input id="news-search" type="search" placeholder="Search headlines…" aria-label="Search headlines"><button id="clear-search" aria-label="Clear search" hidden>×</button></div><button class="filter-button" id="filter-button" aria-label="Show all categories" title="Show top stories">All <span>⌄</span></button></div>
+            <div class="feed-actions"><div class="search-box" id="search-box"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg><input id="news-search" type="search" placeholder="Search headlines…" aria-label="Search headlines"><kbd class="search-shortcut" aria-hidden="true">/</kbd><button id="clear-search" aria-label="Clear search" hidden>×</button></div><button class="filter-button" id="filter-button" aria-label="Show all categories" title="Show top stories">All <span>⌄</span></button></div>
           </div>
 
           <div class="feed-notice" id="feed-notice" role="status"><span class="notice-symbol">i</span><span id="feed-notice-text">Preview mode: connect your free Cloudflare Worker and NewsData.io key to load live stories. PIB is fetched through the Worker.</span><button id="dismiss-notice" aria-label="Dismiss notice">×</button></div>
@@ -145,8 +151,24 @@
     <footer class="site-footer"><a href="#home" class="footer-brand">Narad<span>Now</span></a><p data-i18n="footerLine">An independent interface for reading the news. Headlines remain the property of their original publishers.</p><div class="footer-right"><span>Made for India</span><span class="footer-dot">✳</span><span id="footer-year">2026</span></div></footer>
   </div>
 
+  <div class="reader-backdrop" id="reader-backdrop" hidden></div>
+  <aside class="reader-drawer" id="reader-drawer" aria-hidden="true" aria-labelledby="reader-title" role="dialog" aria-modal="true" inert>
+    <div class="reader-drawer-top"><div><span class="reader-kicker">NARADNOW QUICK READER</span><span class="reader-source-mark">SOURCE-LINKED BRIEFING</span></div><button class="reader-close" id="reader-close" type="button" aria-label="Close reader">×</button></div>
+    <div class="reader-drawer-content" id="reader-content"></div>
+  </aside>
+  <div class="custom-cursor-dot" id="custom-cursor-dot" aria-hidden="true"></div>
+  <div class="custom-cursor-ring" id="custom-cursor-ring" aria-hidden="true"><span>Read ↗</span></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <dialog class="quiz-dialog" id="quiz-dialog"><form method="dialog"><button class="dialog-close" aria-label="Close quiz">×</button></form><div class="eyebrow small-eyebrow"><span class="eyebrow-line"></span><span data-i18n="quizLabel">QUICK KNOWLEDGE CHECK</span></div><h2 data-i18n="quizTitle">A sample current-affairs quiz.</h2><p class="quiz-note" data-i18n="quizNote">Demo question only. Connect verified daily quiz content before publishing this feature.</p><div class="quiz-question" id="quiz-question">Which organisation is India's central bank?</div><div class="quiz-options" id="quiz-options"><button data-answer="wrong">SEBI</button><button data-answer="correct">Reserve Bank of India</button><button data-answer="wrong">NITI Aayog</button></div><p class="quiz-result" id="quiz-result" aria-live="polite"></p></dialog>
+  <dialog class="quiz-dialog" id="quiz-dialog" aria-labelledby="quiz-dialog-title">
+    <form method="dialog"><button class="dialog-close" aria-label="Close quiz">×</button></form>
+    <div class="eyebrow small-eyebrow"><span class="eyebrow-line"></span><span>DAILY CURRENT AFFAIRS</span></div>
+    <div class="quiz-progress-row"><h2 id="quiz-dialog-title">Today's quick quiz</h2><span id="quiz-step">01 / 03</span></div>
+    <p class="quiz-note" id="quiz-note">Questions are built locally from the headlines currently loaded in NaradNow.</p>
+    <div class="quiz-question" id="quiz-question">Loading questions from today's headlines…</div>
+    <div class="quiz-options" id="quiz-options"></div>
+    <p class="quiz-result" id="quiz-result" aria-live="polite"></p>
+    <button class="quiz-next" id="quiz-next" type="button" hidden>Next question →</button>
+  </dialog>
   <script src="app.js"></script>
 </body>
 </html>

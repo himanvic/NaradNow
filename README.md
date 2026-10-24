@@ -1,130 +1,83 @@
-# NaradNow — India, in the know.
+# NaradNow — India, in the know
 
-NaradNow is a responsive Indian news and current-affairs website. It combines general headlines from NewsData.io with official Government of India releases from the Press Information Bureau (PIB). The interface includes automatic/light/dark themes, English/Hindi UI switching, topic navigation, search, local bookmarks, source labels, and a demo quiz.
+NaradNow is a static-first Indian news and current-affairs dashboard. It combines general headlines from NewsData.io with official releases from the Press Information Bureau (PIB), then presents them in a responsive editorial interface.
 
-**Live website:** <https://naradnow.pages.dev/>
-
-## Current deployment
-
-- **Static site:** Cloudflare Pages connected to this GitHub repository. A commit/push to the production branch (usually `main`) triggers a Pages deployment.
-- **News API:** Cloudflare Worker at <https://naradnow-api.notesfriendair1.workers.dev/>.
-- **Endpoint:** <https://naradnow-api.notesfriendair1.workers.dev/api/news?category=top&language=en>
-- **Worker secret:** `NEWS_DATA_API_KEY` is stored in Cloudflare Worker settings, not in this repository or the frontend.
-- **Costs:** Designed to use free tiers only. Provider quotas, product terms, and free-tier limits can change; check the official service pages linked below.
-
-## Files and folders
-
-| File               | Purpose                                                                                                           |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| `index.html`       | Page structure and UI content                                                                                     |
-| `styles.css`       | Responsive styling, animations, theme colors and mobile layouts                                                   |
-| `app.js`           | Frontend behavior, API connection, date parsing, search, category filters, bookmarks, language and theme controls |
-| `favicon.svg`      | NaradNow brand icon                                                                                               |
-| `worker/index.js`  | Cloudflare Worker that combines NewsData.io JSON with PIB RSS data                                                |
-| `worker/README.md` | Worker-specific deployment notes                                                                                  |
+**Live website:** https://naradnow.pages.dev/  
+**News API Worker:** https://naradnow-api.notesfriendair1.workers.dev/  
+**Example endpoint:** https://naradnow-api.notesfriendair1.workers.dev/api/news?category=top&language=en
 
 ## Features
 
-- Responsive layouts for desktop, tablet and mobile.
-- Theme modes: Auto (follows the device setting), Light, and Dark.
-- English/Hindi interface toggle.
-- Categories including Top Stories, Politics, Education, Health, Finance, Business, Science, Technology, Environment, Sports, World, and Government updates.
-- Search across the feed, source attribution, links to the original article, and bookmark storage in the browser.
-- An Official Desk for PIB releases.
-- Relative time labels parse API timestamps as UTC when the timestamp has no explicit timezone, avoiding browser-local timezone offsets. Worker responses normalize known timestamps to ISO UTC.
-- News status indicators and a clear error/empty state if a source is unavailable.
+- Responsive editorial layout with a Dark Forest, Warm Paper, and Auto theme cycle.
+- English/Hindi interface switch and visible language badges on stories.
+- News categories, headline search (`/` focuses search), search terms and local saved stories.
+- NewsData.io headlines and a separate official PIB desk through a Cloudflare Worker.
+- Quality filter for spam-like lottery, jackpot, casino and horoscope headlines.
+- Animated 6-story hero carousel, desktop custom cursor, reading-progress indicator and staggered card entrances.
+- Quick Reader drawer (right-side drawer on desktop; bottom sheet on mobile).
+- Three-question source quiz generated from the headlines loaded into the page.
+- A service worker caches the static app shell after the first visit; locally cached feed responses can support read-only fallback when the network is unavailable.
+- No front-end framework, build step, database, or paid client library is required. After the first successful visit over HTTPS, the service worker caches the static UI shell. Locally cached headlines may remain readable offline; refreshing live headlines requires an internet connection. Offline support is best-effort and depends on the browser retaining site storage.
 
-## Setup and local preview
+## Repository structure
+
+| Path | Purpose |
+| --- | --- |
+| `index.html` | Static page structure and dialog/drawer markup |
+| `styles.css` | Themes, responsive layouts, interactions and motion preferences |
+| `app.js` | UI behavior, data fetching, filtering, bookmarks, quiz and reader drawer |
+| `worker/index.js` | Cloudflare Worker source for NewsData.io and PIB |
+| `worker/README.md` | Instructions for deploying and configuring the Worker |
+| `sw.js` | Service worker that caches the static UI shell for repeat/offline visits |
+| `.gitignore` | Ignores local env and editor artifacts |
+| `CHANGELOG.md` | Summary of notable project changes |
+
+## Run locally
 
 1. Clone or download this repository.
 2. Open the folder in VS Code.
-3. Start `index.html` with the VS Code **Live Server** extension, or use any static local web server.
-4. The frontend is already configured to call the deployed Worker through `API_BASE` near the top of `app.js`.
+3. Use the Live Server extension to open `index.html`, or run any basic static-file server.
+4. The browser will call the configured Worker URL in `app.js` for live news. No API key belongs in the browser code.
 
-The static UI itself does not require a build step, Node.js, or a database. Local browser requests can be affected by the Worker CORS setting; the default Worker setting permits requests from browser origins. If you restrict CORS, allow your production Pages origin and any local origin you use for testing.
+## Deployment
 
-## News API and secure configuration
+### Static website (Cloudflare Pages)
 
-### NewsData.io
+The repository is connected to Cloudflare Pages. Push a commit to the configured production branch (usually `main`) to trigger a website deployment automatically. For a plain HTML/CSS/JS project, use no framework preset, no build command, and `.` as the build output directory if the root directory contains `index.html`.
 
-1. Create a free account at <https://newsdata.io/register>.
-2. Copy the key from the NewsData.io dashboard.
-3. In Cloudflare, open **Workers & Pages → `naradnow-api` → Settings → Variables and secrets**.
-4. Add a **Secret** with the exact name `NEWS_DATA_API_KEY` and paste the key as its value.
-5. Deploy the Worker again if the dashboard asks.
+### News API (Cloudflare Worker)
 
-**Never put the API key in `app.js`, `index.html`, this README, a `.env` file committed to GitHub, or any public source file.** The browser only calls the Worker; the Worker adds the key on the server side.
+The Worker is deployed separately from Pages unless you explicitly configure a Worker build pipeline. To deploy code changes:
 
-NewsData.io can apply delays, daily credit limits, and source/plan restrictions. The app cannot guarantee every event is covered or that breaking news appears instantly. Check current terms at <https://newsdata.io/pricing> and <https://newsdata.io/documentation/latest-news-api>.
+1. Open Cloudflare Dashboard → **Workers & Pages** → `naradnow-api` → **Edit code**.
+2. Replace the editor code with `worker/index.js` from this repository.
+3. Keep the `NEWS_DATA_API_KEY` secret configured in Worker settings.
+4. Deploy the Worker.
+5. Test the example endpoint above. A successful response reports source status under `sources.newsdata` and `sources.pib`.
 
-### PIB RSS
+### API secret
 
-The Worker fetches PIB RSS and displays official releases separately from general news. Current feed URLs are configured in `worker/index.js` under `PIB_FEEDS`. The English request uses `Lang=1&Regid=3`; the Hindi request uses `Lang=2&Regid=3`.
+Create a NewsData.io key through the provider's official website. In Cloudflare Worker settings, add a **Secret** named exactly `NEWS_DATA_API_KEY`. Paste the key as the secret value. Never put the actual key in `app.js`, HTML, README, a public GitHub commit, or a screenshot.
 
-PIB releases are primary sources for what the Government of India has announced. They are not a substitute for independent verification of claims in the releases. RSS content or language labels may change at the source, and an empty feed or an upstream format change can temporarily leave the Official Desk empty.
+The website's public `API_BASE` points to the deployed Worker URL. The key remains server-side.
 
-## Worker deployment and updates
+## News sources and limitations
 
-The Worker is a separate Cloudflare resource; deploying the Pages site does **not** deploy Worker code automatically.
+- **NewsData.io** supplies general news. Provider plan limits, article availability, delay, and language metadata depend on the current plan and provider responses.
+- **PIB** supplies official government press releases. It is not a full feed of every national or international event. Some PIB article titles may be in Hindi even when the rest of the UI is English; titles are displayed as received and language badges are inferred from returned metadata/text.
+- NaradNow filters obvious spam terms, but it cannot guarantee factual correctness or complete coverage. Readers should open original publisher links and verify high-impact claims from primary sources.
+- The current quiz asks questions about publishers attached to loaded headlines; it does not claim to independently verify the underlying news facts.
 
-To deploy or update it manually:
+## Privacy and offline behavior
 
-1. Open <https://dash.cloudflare.com/> → **Workers & Pages** → `naradnow-api` → **Edit code**.
-2. Replace the editor contents with the complete `worker/index.js` from this repository.
-3. Click **Deploy**.
-4. Confirm the existing `NEWS_DATA_API_KEY` secret is still present in the Worker settings. Do not paste the key into source code.
+Saved stories are stored in browser `localStorage`; feed cache is kept in the current browser session. No NaradNow account is required. The interface uses static files and system font fallbacks, but live data and remote article images need an internet connection. Local saved stories remain available on the device that saved them.
 
-The Worker code is kept in the repository for source control. Unless Cloudflare Workers Builds is separately configured, commits to GitHub update the Pages site but do not automatically publish changes to the Worker.
+## Accessibility and motion
 
-### Test the API
+- Keyboard: press `/` to focus headline search, `Ctrl/Cmd + K` also focuses search, `Escape` closes the reader drawer.
+- Interactive story cards can be opened with Enter or Space when focused.
+- Custom cursor and motion-heavy behavior are disabled for coarse/touch pointers and when `prefers-reduced-motion: reduce` is active.
 
-Open this URL to inspect the response:
+## License and attribution
 
-<https://naradnow-api.notesfriendair1.workers.dev/api/news?category=top&language=en>
-
-Expected JSON fields include:
-
-- `articles`: general news and mapped items for the current request.
-- `official`: PIB releases for the Official Desk.
-- `sources.newsdata.ok`: whether NewsData.io returned a successful result.
-- `sources.pib.ok`: whether PIB returned parseable releases.
-- `sources.pib.error`: details if PIB could not be fetched or parsed.
-- `lastUpdated`: time the Worker created the response.
-
-For a fresh diagnostic request, add a unique query parameter such as `&refresh=20261023-1`. The Worker cache key includes query parameters, so a unique value avoids reusing the same combined-response cache entry.
-
-## Deploying the Pages website
-
-This repository is intended for Git-connected Cloudflare Pages:
-
-1. Push changes to the connected GitHub production branch.
-2. In Cloudflare, open the Pages project and confirm the deployment status.
-3. For this plain HTML/CSS/JS site, use no build command and set the build output directory to the repository root (`/`).
-4. Refresh <https://naradnow.pages.dev/> with `Ctrl+F5` to bypass the browser cache after deployment.
-
-After editing files in VS Code, use **Source Control → Commit → Sync Changes/Push**. Git-connected Pages will build/deploy the site automatically after the push.
-
-## Known limitations
-
-- NewsData.io's free tier may be delayed, rate-limited, or omit some articles.
-- The site cannot promise complete coverage of every Indian or international event.
-- Headline categories use a mix of API categories and simple keyword matching; classifications can be imperfect.
-- PIB RSS can occasionally have upstream formatting changes or language mismatches; use `sources.pib.error` to diagnose feed problems.
-- The quiz is a demo question, not a verified daily current-affairs quiz. Review questions before presenting them as exam-preparation material.
-- Bookmarks are stored in local browser storage; they do not sync across devices and can be lost if browser data is cleared.
-- A public news site should preserve original publisher links and respect each source's copyright and terms. The website links users to original articles rather than claiming ownership of them.
-
-## Official links
-
-- NewsData.io registration: <https://newsdata.io/register>
-- NewsData.io pricing: <https://newsdata.io/pricing>
-- NewsData.io documentation: <https://newsdata.io/documentation/latest-news-api>
-- PIB RSS directory: <https://www.pib.gov.in/ViewRss.aspx?lang=1&reg=3>
-- Cloudflare Pages: <https://pages.cloudflare.com/>
-- Cloudflare Workers: <https://developers.cloudflare.com/workers/>
-- Cloudflare Workers pricing: <https://developers.cloudflare.com/workers/platform/pricing/>
-- India trademark public search: <https://tmrsearch.ipindia.gov.in/tmrpublicsearch>
-
-## Brand note
-
-`NaradNow` is the current project name. Before commercial use, independently check domain registration and applicable trademark databases. A basic web search is not legal clearance.
+News headlines, summaries, images, and article content belong to their respective publishers. NaradNow links to original sources and is an independent interface, not an official government website. Add a project license if you want to explicitly grant reuse rights to the code.

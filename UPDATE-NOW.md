@@ -1,23 +1,10 @@
-# NaradNow deployment sync checklist
+# Publishing the NaradNow UI/UX upgrade
 
-The frontend date fix and Worker parsing/date-normalization update are now included in the main project files. This file is only a short update checklist; see `README.md` for the full project guide.
+1. Copy the updated `index.html`, `styles.css`, `app.js`, `README.md`, and `CHANGELOG.md` into the current GitHub-connected project folder, replacing the old files.
+2. Do not remove or overwrite your Cloudflare `NEWS_DATA_API_KEY` secret. It is configured in the Worker dashboard, not in the static files.
+3. In VS Code, save all files (`Ctrl+S`), inspect Source Control, commit, and push/sync to GitHub.
+4. Cloudflare Pages should auto-deploy the static site after the push.
+5. The API Worker endpoint is `https://naradnow-api.notesfriendair1.workers.dev/api/news`. If you change `worker/index.js`, deploy that Worker separately in Cloudflare unless Worker builds from Git are configured.
+6. Hard-refresh `https://naradnow.pages.dev/` using `Ctrl+F5`.
 
-## Update the website on GitHub
-
-1. Open the local NaradNow folder in VS Code.
-2. Confirm the root `app.js` begins with the deployed API endpoint:
-   `https://naradnow-api.notesfriendair1.workers.dev/api/news`
-3. Save, commit, and push/sync changes in VS Code.
-4. Wait for the Git-connected Cloudflare Pages deployment to finish, then hard-refresh `https://naradnow.pages.dev/` with `Ctrl+F5`.
-
-## Worker source
-
-The current Worker source is at `worker/index.js`. Cloudflare Worker changes are deployed separately from Pages unless Worker Git builds are explicitly configured. To synchronize the dashboard editor with the repository, open `naradnow-api` → **Edit code**, paste all of `worker/index.js`, and click **Deploy**. Keep `NEWS_DATA_API_KEY` configured as a Cloudflare Secret.
-
-## Quick API check
-
-Open:
-
-`https://naradnow-api.notesfriendair1.workers.dev/api/news?category=top&language=en`
-
-Check `sources.newsdata.ok`, `sources.pib.ok`, `articles`, and `official`. Use a unique extra query parameter if you need a cache-distinct diagnostic request.
+Quick tests: click theme toggle (Dark Forest → Warm Paper → Auto), choose a story to open Quick Reader, press `/` to focus search, try the 6 hero dots, test the quiz, and check mobile layout with browser device emulation.
