@@ -264,32 +264,19 @@ function heroLoop(now){if(matchMedia("(prefers-reduced-motion: reduce)").matches
 function startHeroLoop(){if(matchMedia("(prefers-reduced-motion: reduce)").matches||heroRaf)return;heroRaf=requestAnimationFrame(heroLoop);}
 function initReadingProgress(){const update=()=>{const doc=document.documentElement;const max=doc.scrollHeight-doc.clientHeight;const pct=max>0?(doc.scrollTop/max)*100:0;$("#reading-progress-fill").style.width=`${Math.max(0,Math.min(100,pct))}%`;};window.addEventListener("scroll",update,{passive:true});window.addEventListener("resize",update);update();}
 function initCustomCursor(){
-  // A minimal macOS-inspired pointer: one crisp arrow, no spring trail, no oversized ring.
-  // Keep the browser's normal cursor on touch devices and for reduced-motion preferences.
+  // NaradNow deliberately uses the native system pointer: it is familiar,
+  // accessible, visible in dialogs, and avoids a distracting custom overlay.
+  // On fine pointers only, track position for a quiet card-edge glow; this
+  // never hides or replaces the browser cursor and does not run on touch or
+  // reduced-motion configurations.
   if(!matchMedia("(pointer: fine)").matches||matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-  const cursor=$("#minimal-cursor");if(!cursor)return;
-  document.documentElement.classList.add("minimal-cursor-enabled");
-  state.customCursorReady=true;
-  const interactiveSelector='a[href],button:not([disabled]),.story-card[data-story-id],.official-item[data-story-id],[role="button"]';
-  const move=e=>{
-    // Native dialogs live in the browser top layer. Leave their pointer untouched.
-    if($("#quiz-dialog")?.open)return;
-    cursor.style.setProperty("--pointer-x",`${Math.max(0,e.clientX-1)}px`);
-    cursor.style.setProperty("--pointer-y",`${Math.max(0,e.clientY-1)}px`);
-    cursor.style.opacity="1";
-    const target=e.target instanceof Element?e.target:null;
-    cursor.classList.toggle("is-interactive",!!target?.closest(interactiveSelector));
-    cursor.classList.toggle("is-pressed",e.buttons>0);
-    const card=target?.closest(".story-card");
-    if(card){const r=card.getBoundingClientRect();card.style.setProperty("--cursor-x",`${e.clientX-r.left}px`);card.style.setProperty("--cursor-y",`${e.clientY-r.top}px`);}
-  };
-  document.addEventListener("pointermove",move,{passive:true});
-  document.addEventListener("pointerdown",()=>cursor.classList.add("is-pressed"),{passive:true});
-  document.addEventListener("pointerup",()=>cursor.classList.remove("is-pressed"),{passive:true});
-  document.documentElement.addEventListener("pointerleave",()=>{cursor.style.opacity="0";});
-  document.documentElement.addEventListener("pointerenter",()=>{cursor.style.opacity="1";});
-  window.addEventListener("blur",()=>{cursor.style.opacity="0";});
-  window.addEventListener("focus",()=>{cursor.style.opacity="1";});
+  document.addEventListener("pointermove",event=>{
+    const target=event.target instanceof Element?event.target.closest(".story-card"):null;
+    if(!target)return;
+    const rect=target.getBoundingClientRect();
+    target.style.setProperty("--cursor-x",`${Math.max(0,event.clientX-rect.left)}px`);
+    target.style.setProperty("--cursor-y",`${Math.max(0,event.clientY-rect.top)}px`);
+  },{passive:true});
 }
 function shuffleList(items){return [...items].sort(()=>Math.random()-.5);}
 function makeOptions(answer,candidates,fallbacks=[]){
@@ -333,17 +320,12 @@ function buildQuiz(){
   });
 }
 function suspendCustomCursorForQuiz(){
-  const root=document.documentElement;const cursor=$("#minimal-cursor");
-  if(!root.classList.contains("minimal-cursor-enabled"))return;
-  root.dataset.cursorSuspendedByQuiz="true";
-  root.classList.remove("minimal-cursor-enabled");
-  if(cursor){cursor.style.opacity="0";cursor.classList.remove("is-interactive","is-pressed");}
+  // The native system cursor remains visible while the quiz dialog is open.
+  document.documentElement.classList.remove("minimal-cursor-enabled");
 }
 function restoreCustomCursorAfterQuiz(){
-  const root=document.documentElement;const wasSuspended=root.dataset.cursorSuspendedByQuiz==="true";
-  delete root.dataset.cursorSuspendedByQuiz;
-  if(!wasSuspended)return;
-  if(matchMedia("(pointer: fine)").matches&&!matchMedia("(prefers-reduced-motion: reduce)").matches&&$("#minimal-cursor"))root.classList.add("minimal-cursor-enabled");
+  // No custom overlay to restore; retain the system pointer in every layer.
+  document.documentElement.classList.remove("minimal-cursor-enabled");
 }
 function launchQuiz(){const questions=buildQuiz();state.quizQuestions=questions;state.quizIndex=0;state.quizScore=0;state.quizLocked=false;$("#quiz-note").textContent=state.language==="hi"?"आपकी ब्रीफिंग की सुर्खियों से पाँच छोटे सवाल। तथ्यों और संदर्भ की पुष्टि मूल खबर से करें।":"Five quick questions based on the headlines in your briefing. Use the original report to confirm facts and context.";const d=$("#quiz-dialog");renderQuizQuestion();if(d.showModal&&!d.open){suspendCustomCursorForQuiz();d.showModal();}else if(!d.showModal)showToast("Your browser doesn't support the quiz dialog.");}
 function renderQuizQuestion(){const questions=state.quizQuestions||[],q=questions[state.quizIndex];const question=$("#quiz-question"),options=$("#quiz-options"),result=$("#quiz-result"),next=$("#quiz-next"),step=$("#quiz-step");result.textContent="";next.hidden=true;state.quizLocked=false;

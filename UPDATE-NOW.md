@@ -1,20 +1,37 @@
-# NaradNow update checklist
+# NaradNow — coordinated frontend redesign update
 
-This patch updates the frontend and documentation. It does not change the deployed Worker code or API secret.
+This update is designed to merge into the existing GitHub-connected `NaradNow` project. It does not replace the repository history or change the Cloudflare Worker/API contract.
 
-1. Replace these files in the existing repository: `index.html`, `styles.css`, `app.js`, `sw.js`, `README.md`, `CHANGELOG.md`, and `UPDATE-NOW.md`.
-2. In VS Code, review Source Control changes, commit, and push to GitHub. Cloudflare Pages should auto-deploy the frontend.
-3. Hard-refresh https://naradnow.pages.dev/ with `Ctrl + F5`.
-4. Test the cursor, then open the daily quiz. The system cursor should be visible while the native quiz dialog is open; close it to restore the page cursor.
-5. Open the **Explore India** disclosure below the story feed. Switch between **Top cities** and **Top states**. Counts are mentions in the loaded articles only, not a ranking of importance.
-6. Select a place card to search the current-affairs feed for matching headlines.
+## Replace these files at the repository root
 
-No Worker deployment is required for these frontend-only changes. Keep the existing `NEWS_DATA_API_KEY` secret in Cloudflare. The Worker source remains unchanged in this patch.
+- `index.html`
+- `styles.css`
+- `app.js`
+- `sw.js`
+- `README.md`
+- `CHANGELOG.md`
+- `UPDATE-NOW.md`
 
-## Checks to run after deployment
+Keep the existing `.git` folder, `favicon.svg`, `.gitignore`, and `worker/` folder. This frontend-only update does not require redeploying the Worker or changing the `NEWS_DATA_API_KEY` secret.
 
-- Theme toggle: Dark Forest → Warm Paper → Auto.
-- Quiz opens, answer choices work, cursor remains visible within the dialog, and closing the dialog restores the page cursor.
-- Explore India opens with a smooth reveal, city/state tabs update, and place cards apply a search.
-- `/` focuses search; Quick Reader opens; saved stories and export work.
-- On phone/tablet, custom cursor is hidden and the region cards stay responsive.
+## Publish
+
+1. Extract the update ZIP into the existing project folder and allow the seven files above to be replaced.
+2. Open VS Code Source Control and review the diff.
+3. Commit with `Redesign NaradNow editorial UI and responsive UX`.
+4. Sync/push to GitHub and wait for Cloudflare Pages to deploy.
+5. Open https://naradnow.pages.dev/ and hard-refresh with `Ctrl + F5`.
+
+## What to verify
+
+- Dark Forest / Warm Paper / Auto theme cycling.
+- Story card hierarchy, hover glow and source/time/read-time metadata.
+- Search via `/`, category changes, bookmarks, reader drawer and quiz dialog.
+- Native cursor visibility over the quiz dialog.
+- Mobile horizontal category bar and bottom-sheet reader.
+- Explore India tabs, and the separate official announcements section.
+- A repeat visit after loading the site once, to verify best-effort offline shell behavior.
+
+## Notes
+
+No API key is included. The production endpoint remains `https://naradnow-api.notesfriendair1.workers.dev/api/news`. The Worker stays separately deployed and its secret stays in Cloudflare. New headlines still require an internet connection.
