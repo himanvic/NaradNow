@@ -13,6 +13,7 @@ NaradNow is a calm, source-linked Indian news and current-affairs reader. It bri
 - Search shortcuts: `/` or `Ctrl/Cmd + K` focus headline search.
 - Category filters for Politics, Education, Health, Finance, Business, Science, Technology, Environment, Sports, World and Government Schemes.
 - Original-source labels, language badges, publication-time handling, spam/lottery and obvious entertainment-promo filtering, duplicate filtering, and load-more support when a next-page token is provided.
+- **Source Health Diagnostics & Dual Clocks**: Honest status indicator showing live provider reachability (NewsData.io and PIB), server fetch timestamps, and explicit cached badges without conflating article publication time with feed check time.
 - Quick Reader drawer, locally saved stories, reading-list `.txt` export, and a three-question briefing quiz grounded in loaded headlines and source labels.
 - Optional UPSC/CSE and SSC/General Awareness study mode with keyword-based topic suggestions and local revision markers.
 - **Explore India**: animated city/state cards based on place mentions in the currently loaded headlines. Mention counts are not a ranking of news importance.
