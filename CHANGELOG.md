@@ -1,5 +1,36 @@
 # Changelog
 
+## 2026-11-02 — Editorial Redesign & Reliability Release
+
+- **Worker Reliability (`worker/index.js`):**
+  - Added explicit 7-second fetch timeout bounding with `AbortController` on upstream requests.
+  - Implemented granular provider-level health metadata (`sources.newsdata`, `sources.pib`) reporting independent statuses (`healthy`, `partial`, `unconfigured`, `failed`).
+  - Added safe JSON schema validation for NewsData and safe XML entity/CDATA parsing for PIB RSS.
+  - Standardized publication date normalization (`normalizeIsoDate`); removed artificial or fabricated dates.
+  - Ensured edge cache keys preserve query parameters and pagination tokens (`page`) to prevent cache collision.
+  - Sanitized error messages to strictly prevent API key leakage.
+- **Frontend State & Dual-Clock Freshness (`app.js`):**
+  - Implemented active `updateSourceStatus()` displaying truthful provider diagnostics, server timestamps, and cached state badges.
+  - Separated story publication time (`article.publishedAt`), server assembly time (`lastUpdated`), and browser cache time (`cacheStoredAt`).
+  - Added in-flight request token guards to prevent race conditions during rapid filter changes.
+  - Added dedicated retry actions when feeds are unavailable.
+  - Preserved all local-first features (bookmarks, .txt export, UPSC/SSC study mode, Explore India, bilingual English/Hindi).
+- **Semantic Structure & Clean Skeletons (`index.html`):**
+  - Removed hardcoded illustrative cards (`NOT LIVE`) from the initial HTML.
+  - Added neutral, accessible loading skeleton placeholders.
+  - Introduced dedicated `#source-status` element with `aria-live="polite"`.
+- **Restrained Editorial Design (`styles.css`):**
+  - Refined typography tokens with Devanagari fallback fonts (`Noto Serif Devanagari`, `Noto Sans Devanagari`).
+  - Designed reusable `.source-status` badges and state variants (`--healthy`, `--partial`, `--cached`, `--unavailable`).
+  - Polished responsive grid layouts for mobile (360px–720px), tablet (721px–1199px), and desktop (1200px+).
+- **Offline & Cache Safety (`sw.js`):**
+  - Bumped app-shell cache to `naradnow-static-v10`.
+  - Added explicit exclusion for `/api/` endpoints to prevent stale data interception.
+  - Verified local bookmarks survive app-shell upgrades.
+- **Documentation:**
+  - Expanded `worker/README.md` with complete API schema, provider states, and Cloudflare deployment steps.
+  - Updated `README.md` to reflect the editorial redesign and reliability enhancements.
+
 ## 2026-10-24 — Coordinated quiet-luxury redesign
 
 - Rebuilt the frontend style system around Dark Forest, Sage Mint, Warm Gold and Warm Paper, with consistent typography, borders, spacing and component states.
